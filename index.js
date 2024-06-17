@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const mongoose = require('mongoose')
 
 app.use(cors())
 app.use(express.json())
@@ -16,6 +17,28 @@ const requestLogger = (request, response, next) => {
 app.use(requestLogger)
 
 app.use(express.static('dist'))
+
+// mongoose connection
+const password = process.argv[2]
+const url = `mongodb+srv://admin:${password}@cluster18.fml6v4x.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster18`
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+    content: String,
+    important: Boolean,
+})
+
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
 
 let notes = [
     {
@@ -40,7 +63,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
+  Note.find({}).then(notes => {
     response.json(notes)
+  })
 })
 
 app.get(`/api/notes/:id`, (request, response) => {
