@@ -15,6 +15,7 @@ mongoose.connect(url)
 
 const noteSchema = new mongoose.Schema({
     content: String,
+    lastname: String,
     important: Boolean,
 })
 
@@ -25,14 +26,14 @@ const note = new Note({
     important: false,
 })
 
-// note.save().then(result => {
-//     console.log(`noter saved!`)
-//     mongoose.connection.close()
-// })
-
-Note.find({important: true}).then(result => {
-    result.forEach(note => {
-        console.log(note)
-    })
+note.save().then(result => {
+    console.log(`noter saved!`)
     mongoose.connection.close()
 })
+
+// Note.find({important: true}).then(result => {
+//     result.forEach(note => {
+//         console.log(note)
+//     })
+//     mongoose.connection.close()
+// })
