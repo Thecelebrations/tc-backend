@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
 if(process.argv.length < 3){
-    console.log(`give password as an argument`)
-    process.exit(1)
+  console.log(`give password as an argument`)
+  process.exit(1)
 }
 
 const password = process.argv[2]
@@ -14,21 +14,21 @@ mongoose.set('strictQuery',false)
 mongoose.connect(url)
 
 const noteSchema = new mongoose.Schema({
-    content: String,
-    lastname: String,
-    important: Boolean,
+  content: String,
+  lastname: String,
+  important: Boolean,
 })
 
 const Note = mongoose.model('Note', noteSchema)
 
 const note = new Note({
-    content: 'Naruto Uzumaki',
-    important: false,
+  content: 'Naruto Uzumaki',
+  important: false,
 })
 
-note.save().then(result => {
-    console.log(`noter saved!`)
-    mongoose.connection.close()
+note.save().then(() => {
+  console.log(`noter saved!`)
+  mongoose.connection.close()
 })
 
 // Note.find({important: true}).then(result => {
