@@ -30,6 +30,6 @@ export default [
   },
   pluginJs.configs.recommended,
   {
-    ignores: ["**/temp.js", "dist/*"]
+    ignores: ["**/temp.js", "dist/*","node_modules/*"]
   }
 ]
