@@ -69,7 +69,24 @@ describe('when there is initially some notes saved', () => {
   })
 
   describe('addition of a new note', () => {
+
+    beforeEach(async () => {
+      await User.deleteMany({})
+      const passwordHash = await bcrypt.hash('sekret', 10)
+      const user = new User({ username: 'root', passwordHash })
+      await user.save()
+    })
+
     test('succeeds with valid data', async () => {
+
+      const loggedInUser = await api
+        .post('/api/login')
+        .send({
+          username : 'root',
+          password: 'sekret',
+        })
+      const token = loggedInUser.body.token
+
       const newNote = {
         content: 'async/await simplifies making async calls',
         important: true,
@@ -77,6 +94,7 @@ describe('when there is initially some notes saved', () => {
 
       await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
         .send(newNote)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -89,12 +107,21 @@ describe('when there is initially some notes saved', () => {
     })
 
     test('fails with status code 400 if data invalid', async () => {
+      const loggedInUser = await api
+        .post('/api/login')
+        .send({
+          username : 'root',
+          password: 'sekret',
+        })
+      const token = loggedInUser.body.token
+
       const newNote = {
         important: true
       }
 
       await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
         .send(newNote)
         .expect(400)
 
